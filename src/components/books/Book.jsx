@@ -1,9 +1,17 @@
+// src/components/books/Book.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Book = ({ title, author, year, image }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/book/${encodeURIComponent(title)}`);
+  };
+
   return (
-    <div className='min-w-[240px] flex-shrink-0'>
-      <div className='h-[308px] w-full bg-gray-200 rounded-lg overflow-hidden shadow-md relative group'>
+    <div className='min-w-[240px] flex-shrink-0' onClick={handleClick}>
+      <div className='h-[308px] w-full bg-gray-200 rounded-lg overflow-hidden shadow-md relative group cursor-pointer'>
         {image && (
           <img
             src={image}

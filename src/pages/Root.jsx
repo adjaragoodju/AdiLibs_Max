@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useBooks } from '../hooks/useBooks';
 import { useScrollToSection } from '../hooks/useScrollToSection';
 import { FavoritesProvider } from '../context/FavoritesContext';
+import { useNavigate } from 'react-router-dom';
 
 // Import layout components
 import Header from '../components/layout/Header';
@@ -26,6 +27,7 @@ import AuthorQuote from '../components/authors/AuthorQuote';
 import AuthorsSection from '../components/authors/AuthorsSection';
 
 const Root = () => {
+  const navigate = useNavigate();
   // Use custom hooks
   const { books, uniqueGenres, uniqueAuthors, getBooksByFilter, searchBooks } =
     useBooks();
@@ -53,7 +55,7 @@ const Root = () => {
 
   // Handler for book click
   const handleBookClick = (book) => {
-    setSelectedBook(book);
+    navigate(`/book/${encodeURIComponent(book.title)}`);
   };
 
   // Handler for search

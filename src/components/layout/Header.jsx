@@ -1,15 +1,13 @@
 import React from 'react';
 import Logo from '../ui/Logo';
 import { useFavorites } from '../../context/FavoritesContext';
+import { Link } from 'react-router-dom';
 
 const Header = ({
   uniqueGenres,
   uniqueAuthors,
   mobileMenuOpen,
   toggleMobileMenu,
-  searchQuery,
-  setSearchQuery,
-  handleSearch,
   scrollToSection,
   homeRef,
   genresRef,
@@ -179,40 +177,69 @@ const Header = ({
                 </span>
               )}
             </button>
-          </div>
-          {/* Search Bar */}
-          <form
-            onSubmit={handleSearch}
-            className='hidden md:flex items-center ml-8'
-          >
-            <input
-              type='text'
-              placeholder='Search books...'
-              className='px-4 py-2 border-2 rounded-l-lg focus:outline-none  w-64'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button
-              type='submit'
-              className='bg-black hover:bg-gray-800  border-l-0 text-white px-6 py-2.5 h-full rounded-r-lg transition-colors flex items-center'
+            <Link
+              to='/profile'
+              className='font-medium hover:text-black transition-colors'
+              onMouseEnter={() => setHoveredNavItem('profile')}
+              onMouseLeave={() => setHoveredNavItem(null)}
             >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='h-5 w-5 mr-1'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
+              <span
+                className={`relative ${
+                  hoveredNavItem === 'profile'
+                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                    : ''
+                }`}
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                />
-              </svg>
-              Search
-            </button>
-          </form>
+                Profile
+              </span>
+            </Link>
+            <Link
+              to='/login'
+              className='font-medium hover:text-black transition-colors'
+              onMouseEnter={() => setHoveredNavItem('login')}
+              onMouseLeave={() => setHoveredNavItem(null)}
+            >
+              <span
+                className={`relative ${
+                  hoveredNavItem === 'login'
+                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                    : ''
+                }`}
+              >
+                Login
+              </span>
+            </Link>
+            <Link
+              to='/browse'
+              className='font-medium hover:text-black transition-colors'
+              onMouseEnter={() => setHoveredNavItem('search')}
+              onMouseLeave={() => setHoveredNavItem(null)}
+              aria-label='Search'
+            >
+              <span
+                className={`relative ${
+                  hoveredNavItem === 'search'
+                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                    : ''
+                }`}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='h-5 w-5'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                  />
+                </svg>
+              </span>
+            </Link>
+          </div>
         </nav>
 
         {/* Mobile Menu */}
@@ -271,37 +298,38 @@ const Header = ({
                 </span>
               )}
             </button>
-
-            {/* Mobile Search */}
-            <form onSubmit={handleSearch} className='flex mt-2'>
-              <input
-                type='text'
-                placeholder='Search books...'
-                className='flex-1 px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-black'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                type='submit'
-                className='bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-r-lg transition-colors flex items-center'
+            <Link
+              to='/profile'
+              className='font-medium hover:text-black transition-colors block'
+            >
+              Profile
+            </Link>
+            <Link
+              to='/login'
+              className='font-medium hover:text-black transition-colors block'
+            >
+              Login
+            </Link>
+            <Link
+              to='/browse'
+              className='font-medium hover:text-black transition-colors flex items-center'
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='h-5 w-5 mr-2'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='h-5 w-5 mr-1'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                  />
-                </svg>
-                Search
-              </button>
-            </form>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                />
+              </svg>
+              Search
+            </Link>
           </div>
         )}
       </div>
