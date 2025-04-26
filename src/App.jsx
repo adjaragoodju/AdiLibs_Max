@@ -5,9 +5,10 @@ import BookDetail from './pages/BookDetail';
 import AuthorDetail from './pages/AuthorDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { FavoritesProvider } from './context/FavoritesContext';
 import Browse from './pages/Browse';
 import Profile from './pages/Profile';
+import Favorites from './pages/Favorites';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/browse' element={<Browse />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/favorites' element={<Favorites />} />
       </Routes>
     </FavoritesProvider>
   );

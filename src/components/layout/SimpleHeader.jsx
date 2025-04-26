@@ -91,6 +91,17 @@ const SimpleHeader = () => {
               </svg>
             </Link>
             <Link
+              to='/favorites'
+              className='font-medium hover:text-black transition-colors flex items-center'
+            >
+              <span>Favorites</span>
+              {favorites.length > 0 && (
+                <span className='ml-1 bg-black text-white text-xs rounded-full px-2 py-0.5'>
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
+            <Link
               to='/profile'
               className='font-medium hover:text-black transition-colors'
             >
@@ -102,17 +113,6 @@ const SimpleHeader = () => {
             >
               Login
             </Link>
-            <button
-              className='font-medium hover:text-black transition-colors flex items-center'
-              onClick={() => navigate('/profile')}
-            >
-              <span>Favorites</span>
-              {favorites.length > 0 && (
-                <span className='ml-1 bg-black text-white text-xs rounded-full px-2 py-0.5'>
-                  {favorites.length}
-                </span>
-              )}
-            </button>
           </div>
         </nav>
 
@@ -146,6 +146,17 @@ const SimpleHeader = () => {
               Search
             </Link>
             <Link
+              to='/favorites'
+              className='font-medium hover:text-black transition-colors'
+            >
+              Favorites
+              {favorites.length > 0 && (
+                <span className='ml-1 bg-black text-white text-xs rounded-full px-2 py-0.5'>
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
+            <Link
               to='/profile'
               className='font-medium hover:text-black transition-colors'
             >
@@ -156,17 +167,6 @@ const SimpleHeader = () => {
               className='font-medium hover:text-black transition-colors'
             >
               Login
-            </Link>
-            <Link
-              to='/profile'
-              className='font-medium hover:text-black transition-colors'
-            >
-              Favorites
-              {favorites.length > 0 && (
-                <span className='ml-1 bg-black text-white text-xs rounded-full px-2 py-0.5'>
-                  {favorites.length}
-                </span>
-              )}
             </Link>
           </div>
         )}

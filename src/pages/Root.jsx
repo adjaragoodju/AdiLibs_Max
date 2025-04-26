@@ -36,7 +36,6 @@ const Root = () => {
   // State management
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
-  const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState(null);
@@ -102,7 +101,6 @@ const Root = () => {
         authorsRef={authorsRef}
         reviewsRef={reviewsRef}
         aboutRef={aboutRef}
-        setShowFavoritesModal={setShowFavoritesModal}
         hoveredNavItem={hoveredNavItem}
         setHoveredNavItem={setHoveredNavItem}
         selectedGenre={selectedGenre}
@@ -237,14 +235,7 @@ const Root = () => {
         />
       )}
 
-      {showFavoritesModal && (
-        <FavoritesModal
-          setShowFavoritesModal={setShowFavoritesModal}
-          setSelectedBook={setSelectedBook}
-          scrollToSection={scrollToSection}
-          genresRef={genresRef}
-        />
-      )}
+  
     </FavoritesProvider>
   );
 };
