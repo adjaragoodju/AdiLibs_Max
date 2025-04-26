@@ -1,13 +1,13 @@
 // src/components/layout/SimpleHeader.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../ui/Logo';
 import { useFavorites } from '../../context/FavoritesContext';
 
 const SimpleHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { favorites } = useFavorites();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
