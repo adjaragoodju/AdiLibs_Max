@@ -51,6 +51,7 @@ app.use('/api/books', require('./routes/bookRoutes'));
 app.use('/api/authors', require('./routes/authorRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/favorites', require('./routes/favoriteRoutes'));
+app.use('/api/telegram', require('./routes/telegramRoutes')); // New Telegram routes
 
 // Sync database and start server
 db.sequelize
