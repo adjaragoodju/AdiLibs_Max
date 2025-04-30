@@ -2,6 +2,7 @@
 import React from 'react';
 import Logo from '../ui/Logo';
 import { useFavorites } from '../../context/FavoritesContext';
+import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 const Header = ({
@@ -11,6 +12,7 @@ const Header = ({
   setHoveredNavItem,
 }) => {
   const { favorites } = useFavorites();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className='fixed top-0 left-0 right-0 bg-white shadow-md z-50'>
@@ -100,39 +102,62 @@ const Header = ({
               )}
             </Link>
 
-            <Link
-              to='/profile'
-              className='font-medium hover:text-black transition-colors'
-              onMouseEnter={() => setHoveredNavItem('profile')}
-              onMouseLeave={() => setHoveredNavItem(null)}
-            >
-              <span
-                className={`relative ${
-                  hoveredNavItem === 'profile'
-                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
-                    : ''
-                }`}
-              >
-                Profile
-              </span>
-            </Link>
+            {isAuthenticated ? (
+              // Show these items when user is logged in
+              <>
+                <Link
+                  to='/profile'
+                  className='font-medium hover:text-black transition-colors'
+                  onMouseEnter={() => setHoveredNavItem('profile')}
+                  onMouseLeave={() => setHoveredNavItem(null)}
+                >
+                  <span
+                    className={`relative ${
+                      hoveredNavItem === 'profile'
+                        ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                        : ''
+                    }`}
+                  >
+                    Profile
+                  </span>
+                </Link>
 
-            <Link
-              to='/login'
-              className='font-medium hover:text-black transition-colors'
-              onMouseEnter={() => setHoveredNavItem('login')}
-              onMouseLeave={() => setHoveredNavItem(null)}
-            >
-              <span
-                className={`relative ${
-                  hoveredNavItem === 'login'
-                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
-                    : ''
-                }`}
+                <button
+                  onClick={() => logout()}
+                  className='font-medium hover:text-black transition-colors'
+                  onMouseEnter={() => setHoveredNavItem('logout')}
+                  onMouseLeave={() => setHoveredNavItem(null)}
+                >
+                  <span
+                    className={`relative ${
+                      hoveredNavItem === 'logout'
+                        ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                        : ''
+                    }`}
+                  >
+                    Logout
+                  </span>
+                </button>
+              </>
+            ) : (
+              // Show login when user is not logged in
+              <Link
+                to='/login'
+                className='font-medium hover:text-black transition-colors'
+                onMouseEnter={() => setHoveredNavItem('login')}
+                onMouseLeave={() => setHoveredNavItem(null)}
               >
-                Login
-              </span>
-            </Link>
+                <span
+                  className={`relative ${
+                    hoveredNavItem === 'login'
+                      ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                      : ''
+                  }`}
+                >
+                  Login
+                </span>
+              </Link>
+            )}
 
             <Link
               to='/browse'
@@ -187,18 +212,33 @@ const Header = ({
                 </span>
               )}
             </Link>
-            <Link
-              to='/profile'
-              className='font-medium hover:text-black transition-colors block'
-            >
-              Profile
-            </Link>
-            <Link
-              to='/login'
-              className='font-medium hover:text-black transition-colors block'
-            >
-              Login
-            </Link>
+
+            {isAuthenticated ? (
+              // Show these items when user is logged in - mobile version
+              <>
+                <Link
+                  to='/profile'
+                  className='font-medium hover:text-black transition-colors block'
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => logout()}
+                  className='font-medium hover:text-black transition-colors block text-left'
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              // Show login when user is not logged in - mobile version
+              <Link
+                to='/login'
+                className='font-medium hover:text-black transition-colors block'
+              >
+                Login
+              </Link>
+            )}
+
             <Link
               to='/browse'
               className='font-medium hover:text-black transition-colors flex items-center'

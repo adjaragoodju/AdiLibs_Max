@@ -1,16 +1,23 @@
 // src/components/layout/SimpleHeader.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../ui/Logo';
 import { useFavorites } from '../../context/FavoritesContext';
+import { useAuth } from '../../context/AuthContext';
 
 const SimpleHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { favorites } = useFavorites();
-  // const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -81,18 +88,33 @@ const SimpleHeader = () => {
                 </span>
               )}
             </Link>
-            <Link
-              to='/profile'
-              className='font-medium hover:text-black transition-colors'
-            >
-              Profile
-            </Link>
-            <Link
-              to='/login'
-              className='font-medium hover:text-black transition-colors'
-            >
-              Login
-            </Link>
+
+            {isAuthenticated ? (
+              // Show these items when user is logged in
+              <>
+                <Link
+                  to='/profile'
+                  className='font-medium hover:text-black transition-colors'
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className='font-medium hover:text-black transition-colors'
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              // Show login when user is not logged in
+              <Link
+                to='/login'
+                className='font-medium hover:text-black transition-colors'
+              >
+                Login
+              </Link>
+            )}
+
             <Link
               to='/browse'
               className='font-medium hover:text-black transition-colors'
@@ -136,18 +158,33 @@ const SimpleHeader = () => {
                 </span>
               )}
             </Link>
-            <Link
-              to='/profile'
-              className='font-medium hover:text-black transition-colors'
-            >
-              Profile
-            </Link>
-            <Link
-              to='/login'
-              className='font-medium hover:text-black transition-colors'
-            >
-              Login
-            </Link>
+
+            {isAuthenticated ? (
+              // Show these items when user is logged in - mobile version
+              <>
+                <Link
+                  to='/profile'
+                  className='font-medium hover:text-black transition-colors'
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className='font-medium hover:text-black transition-colors text-left'
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              // Show login when user is not logged in - mobile version
+              <Link
+                to='/login'
+                className='font-medium hover:text-black transition-colors'
+              >
+                Login
+              </Link>
+            )}
+
             <Link
               to='/browse'
               className='font-medium hover:text-black transition-colors flex items-center'

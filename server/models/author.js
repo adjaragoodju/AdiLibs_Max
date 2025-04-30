@@ -12,6 +12,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: '/writer.jpg',
     },
+  }, {
+    // Explicitly use lowercase table name for PostgreSQL
+    tableName: 'authors',
+    // Keep timestamps but make sure they match PostgreSQL conventions
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   Author.associate = (models) => {

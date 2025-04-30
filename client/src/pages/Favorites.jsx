@@ -1,14 +1,13 @@
 // src/pages/Favorites.jsx
-import { useNavigate, Link } from 'react-router-dom'; // Add Link import here
+import { useNavigate, Link } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
-import SimpleLayout from '../components/layout/SimpleLayout';
 import { useAuth } from '../context/AuthContext';
+import SimpleLayout from '../components/layout/SimpleLayout';
 
 const Favorites = () => {
   const navigate = useNavigate();
   const { favorites, removeFromFavorites, loading } = useFavorites();
-  // If you don't have AuthContext yet, you can remove this line and related code
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   if (loading) {
     return (
@@ -25,7 +24,34 @@ const Favorites = () => {
     <SimpleLayout>
       <div className='container mx-auto px-6 py-8'>
         <h1 className='text-3xl font-bold mb-8'>Your Favorites</h1>
-        {!isAuthenticated && (
+
+        {isAuthenticated ? (
+          <div className='mb-6 bg-blue-50 border-l-4 border-blue-500 p-4'>
+            <div className='flex'>
+              <div className='flex-shrink-0'>
+                <svg
+                  className='h-5 w-5 text-blue-500'
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 20 20'
+                  fill='currentColor'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 005 10a6 6 0 0010-5.944A5 5 0 0010 7z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </div>
+              <div className='ml-3'>
+                <p className='text-sm text-blue-700'>
+                  Logged in as{' '}
+                  <span className='font-semibold'>{user.username}</span>. Your
+                  favorites are synced with your account.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
           <div className='bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6'>
             <div className='flex'>
               <div className='flex-shrink-0'>
@@ -58,6 +84,7 @@ const Favorites = () => {
             </div>
           </div>
         )}
+
         {favorites.length > 0 ? (
           <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-1'>
             {favorites.map((book, index) => (

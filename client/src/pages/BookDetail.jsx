@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import booksData from '../data/books.json';
 import SimpleLayout from '../components/layout/SimpleLayout';
+import UserProfilePanel from '../components/ui/UserProfilePanel';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -86,6 +87,9 @@ const BookDetail = () => {
           Back
         </button>
       </div>
+
+      {/* User Profile Panel */}
+      <UserProfilePanel />
 
       <div className='flex flex-col md:flex-row gap-8'>
         <div className='md:w-1/3'>

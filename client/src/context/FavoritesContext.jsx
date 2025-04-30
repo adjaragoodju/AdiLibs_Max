@@ -1,6 +1,5 @@
 // src/context/FavoritesContext.jsx
 import { createContext, useState, useContext, useEffect } from 'react';
-import { favoriteService } from '../services/api';
 import { useAuth } from './AuthContext';
 
 const FavoritesContext = createContext(null);
@@ -8,9 +7,10 @@ const FavoritesContext = createContext(null);
 export function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const API_URL = 'http://localhost:5000/api'; // You would replace with your real API URL
 
-  // Fetch favorites from API when authenticated
+  // Fetch favorites when authentication state changes
   useEffect(() => {
     if (isAuthenticated) {
       fetchFavorites();
@@ -26,14 +26,28 @@ export function FavoritesProvider({ children }) {
       }
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   // Fetch favorites from API
   const fetchFavorites = async () => {
     try {
       setLoading(true);
-      const response = await favoriteService.getFavorites();
+
+      // For demo purposes, we'll use local storage even for authenticated users
+      // In a production app, you would call your API
+      const savedFavorites = localStorage.getItem('adilibs-favorites');
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+
+      // Uncomment when you have a real API
+      /*
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_URL}/favorites`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setFavorites(response.data);
+      */
     } catch (error) {
       console.error('Error fetching favorites:', error);
     } finally {
@@ -43,41 +57,78 @@ export function FavoritesProvider({ children }) {
 
   // Add to favorites
   const addToFavorites = async (book) => {
-    if (isAuthenticated) {
-      try {
-        await favoriteService.addFavorite(book.id);
+    try {
+      if (isAuthenticated) {
+        // In a production app, this would call your API
+        // For demo purposes, we'll use localStorage for both authenticated and non-authenticated users
+
+        // Check if already in favorites first
+        if (!favorites.some((fav) => fav.title === book.title)) {
+          const newFavorites = [...favorites, book];
+          setFavorites(newFavorites);
+          localStorage.setItem(
+            'adilibs-favorites',
+            JSON.stringify(newFavorites)
+          );
+        }
+
+        // Uncomment when you have a real API
+        /*
+        const token = localStorage.getItem('token');
+        await axios.post(`${API_URL}/favorites`, { bookId: book.id }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         // Refresh favorites from server
         fetchFavorites();
-      } catch (error) {
-        console.error('Error adding to favorites:', error);
+        */
+      } else {
+        // Fallback to localStorage for non-authenticated users
+        if (!favorites.some((fav) => fav.title === book.title)) {
+          const newFavorites = [...favorites, book];
+          setFavorites(newFavorites);
+          localStorage.setItem(
+            'adilibs-favorites',
+            JSON.stringify(newFavorites)
+          );
+        }
       }
-    } else {
-      // Fallback to localStorage for non-authenticated users
-      if (!favorites.some((fav) => fav.title === book.title)) {
-        const newFavorites = [...favorites, book];
-        setFavorites(newFavorites);
-        localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
-      }
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
     }
   };
 
   // Remove from favorites
   const removeFromFavorites = async (bookToRemove) => {
-    if (isAuthenticated) {
-      try {
-        await favoriteService.removeFavorite(bookToRemove.id);
+    try {
+      if (isAuthenticated) {
+        // In a production app, this would call your API
+        // For demo purposes, we'll use localStorage for both authenticated and non-authenticated users
+
+        const newFavorites = favorites.filter(
+          (book) => book.title !== bookToRemove.title
+        );
+        setFavorites(newFavorites);
+        localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
+
+        // Uncomment when you have a real API
+        /*
+        const token = localStorage.getItem('token');
+        await axios.delete(`${API_URL}/favorites/${bookToRemove.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         // Refresh favorites from server
         fetchFavorites();
-      } catch (error) {
-        console.error('Error removing from favorites:', error);
+        */
+      } else {
+        // Fallback to localStorage for non-authenticated users
+        const newFavorites = favorites.filter(
+          (book) => book.title !== bookToRemove.title
+        );
+        setFavorites(newFavorites);
+        localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
       }
-    } else {
-      // Fallback to localStorage for non-authenticated users
-      const newFavorites = favorites.filter(
-        (book) => book.title !== bookToRemove.title
-      );
-      setFavorites(newFavorites);
-      localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
     }
   };
 
