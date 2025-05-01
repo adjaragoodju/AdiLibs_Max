@@ -1,4 +1,3 @@
-// controllers/telegramController.js
 const { TelegramSubscriber } = require('../models');
 
 // Handle newsletter subscription via Telegram
@@ -102,4 +101,22 @@ exports.handleWebhook = async (req, res) => {
     // Still return 200 to Telegram to avoid repeated deliveries
     res.status(200).json({ success: false, error: error.message });
   }
+};
+
+// Mock: Send a test message (admin only)
+exports.sendTestMessage = async (req, res) => {
+  console.log('Sending test message (mock)');
+  res.status(200).json({ message: 'Test message sent (mock)' });
+};
+
+// Mock: Broadcast message to all subscribers (admin only)
+exports.broadcastMessage = async (req, res) => {
+  console.log('Broadcasting message (mock)');
+  res.status(200).json({ message: 'Broadcast message sent (mock)' });
+};
+
+// Mock: Set up Telegram webhook URL (admin only)
+exports.setupWebhook = async (req, res) => {
+  console.log('Setting up webhook (mock)');
+  res.status(200).json({ message: 'Webhook setup complete (mock)' });
 };
