@@ -1,3 +1,4 @@
+// src/components/books/BookModal.jsx
 import React from 'react';
 import Modal from '../layout/Modal';
 import { useFavorites } from '../../context/FavoritesContext';
@@ -5,18 +6,48 @@ import { useFavorites } from '../../context/FavoritesContext';
 const BookModal = ({ selectedBook, setSelectedBook }) => {
   const { favorites, addToFavorites, removeFromFavorites } = useFavorites();
 
-  // Проверяем, находится ли книга в избранном
+  // Enhanced check for existence in favorites - check both by ID and title
   const isInFavorites = favorites.some(
     (book) =>
-      book.title === selectedBook.title && book.author === selectedBook.author
+      (book.id && selectedBook.id && book.id === selectedBook.id) ||
+      (book.title === selectedBook.title && book.author === selectedBook.author)
   );
 
-  // Обработчик добавления/удаления из избранного
+  // Enhanced handler to ensure book has consistent data
   const handleFavoritesToggle = () => {
+    // Debugging log
+    console.log('Current book:', selectedBook);
+    console.log('Current favorites:', favorites);
+
+    // Ensure book has an id before proceeding - find one if possible
+    if (!selectedBook.id) {
+      console.log('Book missing ID, using normalized data');
+    }
+
+    // Normalize the book object to ensure consistent structure
+    const normalizedBook = {
+      id: selectedBook.id, // We'll keep this even if undefined, to detect the issue
+      title: selectedBook.title,
+      author: selectedBook.author,
+      year: selectedBook.year,
+      genre: selectedBook.genre,
+      image: selectedBook.image || '/placeholder-book.jpg',
+      description: selectedBook.description,
+      pages: selectedBook.pages || '320',
+      language: selectedBook.language || 'English',
+      rating: selectedBook.rating || 4,
+      ratingCount: selectedBook.ratingCount || '124',
+    };
+
+    console.log('Using normalized book:', normalizedBook);
+
+    // Then proceed with add/remove logic
     if (isInFavorites) {
-      removeFromFavorites(selectedBook);
+      console.log('Removing book from favorites');
+      removeFromFavorites(normalizedBook);
     } else {
-      addToFavorites(selectedBook);
+      console.log('Adding book to favorites');
+      addToFavorites(normalizedBook);
     }
   };
 
@@ -50,6 +81,16 @@ const BookModal = ({ selectedBook, setSelectedBook }) => {
                 {selectedBook.language || 'English'}
               </span>
             </div>
+
+            {/* Add book ID if available - for debugging */}
+            {selectedBook.id && (
+              <div className='flex items-center'>
+                <span className='text-gray-500'>Book ID:</span>
+                <span className='ml-auto text-xs text-gray-400'>
+                  {selectedBook.id}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className='md:w-2/3'>

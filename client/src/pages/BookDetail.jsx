@@ -1,8 +1,8 @@
 // client/src/pages/BookDetail.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useFavorites } from '../context/FavoritesContext';
-import booksData from '../data/books.json';
 import SimpleLayout from '../components/layout/SimpleLayout';
 import UserProfilePanel from '../components/ui/UserProfilePanel';
 
@@ -12,16 +12,48 @@ const BookDetail = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const { favorites, addToFavorites, removeFromFavorites } = useFavorites();
+  const API_URL = 'http://localhost:3001/api'; // Match your server port
 
   useEffect(() => {
-    // This will be replaced with an API call later
-    // For now, we'll use the local data
-    const foundBook = booksData.find(
-      (book) => book.title === decodeURIComponent(id)
-    );
-    setBook(foundBook);
-    setLoading(false);
-  }, [id]);
+    // Fetch book details from API instead of local data
+    const fetchBookDetails = async () => {
+      try {
+        setLoading(true);
+
+        // Get all books from API
+        const response = await axios.get(`${API_URL}/books`);
+        const books = response.data;
+
+        // Find the book by title (from URL parameter)
+        const decodedTitle = decodeURIComponent(id);
+        const foundBook = books.find((b) => b.title === decodedTitle);
+
+        if (foundBook) {
+          console.log('Found book with ID:', foundBook.id);
+          setBook(foundBook);
+        } else {
+          // Fallback to local data if needed
+          const localBooks = (await import('../data/books.json')).default;
+          const localBook = localBooks.find((b) => b.title === decodedTitle);
+
+          if (localBook) {
+            console.log(
+              'Found book in local data, but it may not have the correct database ID'
+            );
+            setBook(localBook);
+          } else {
+            console.error('Book not found in API or local data');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching book details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookDetails();
+  }, [id, API_URL]);
 
   if (loading) {
     return (
@@ -53,11 +85,27 @@ const BookDetail = () => {
     );
   }
 
+  // Enhanced check for favorites - check both by ID and title
   const isInFavorites = favorites.some(
-    (fav) => fav.title === book.title && fav.author === book.author
+    (fav) =>
+      (fav.id && book.id && fav.id === book.id) ||
+      (fav.title === book.title && fav.author === book.author)
   );
 
   const handleFavoritesToggle = () => {
+    console.log('Toggle favorites for book:', {
+      title: book.title,
+      id: book.id,
+      alreadyInFavorites: isInFavorites,
+    });
+
+    // Make sure we have a valid book object before proceeding
+    if (!book.id) {
+      console.warn(
+        'Book missing ID in favorites toggle, might cause database issues'
+      );
+    }
+
     if (isInFavorites) {
       removeFromFavorites(book);
     } else {
@@ -120,6 +168,12 @@ const BookDetail = () => {
               <span className='text-gray-500'>Language:</span>
               <span className='ml-auto'>{book.language || 'English'}</span>
             </div>
+
+            {/* Add book ID for debugging */}
+            <div className='flex items-center text-xs text-gray-400'>
+              <span>Book ID:</span>
+              <span className='ml-auto'>{book.id || 'Not available'}</span>
+            </div>
           </div>
         </div>
 
@@ -157,11 +211,9 @@ const BookDetail = () => {
             <h3 className='text-xl font-semibold mb-3'>About the Book</h3>
             <p className='text-gray-700 leading-relaxed'>
               {book.description ||
-                `${
-                  book.title
-                } is a ${book.genre.toLowerCase()} novel written by ${
-                  book.author
-                } and published in ${
+                `${book.title} is a ${
+                  book.genre?.toLowerCase() || 'captivating'
+                } novel written by ${book.author} and published in ${
                   book.year
                 }. This captivating book takes readers on an unforgettable journey through imagination and adventure. With compelling characters and an engaging plot, it has become a favorite among readers worldwide.`}
             </p>

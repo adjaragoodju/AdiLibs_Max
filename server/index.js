@@ -17,15 +17,18 @@ console.log('- NODE_ENV:', process.env.NODE_ENV || 'development');
 console.log('- DB_HOST:', process.env.DB_HOST);
 console.log('- DB_NAME:', process.env.DB_NAME);
 
-// Middleware - More permissive CORS configuration
 app.use(
   cors({
-    origin: '*', // Allow all origins for testing
+    origin: [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:3000',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
-
 // Add CORS preflight handling
 app.options('*', cors());
 

@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  // Fix: destructure the register function from useAuth
+  const { isAuthenticated, register } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -47,23 +48,13 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // For now, let's bypass the API call and simulate a successful registration
-      // since your backend is showing connection issues
-      console.log('Registration data:', {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
+      // Now register function is properly defined
+      const result = await register(
+        formData.username,
+        formData.email,
+        formData.password
+      );
 
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-
-      // When your backend is ready, uncomment this and add back the 'register' to the destructured auth context:
-      /*
-      const result = await register(formData.username, formData.email, formData.password);
-      
       if (result.success) {
         setSuccess(true);
         setTimeout(() => {
@@ -72,7 +63,6 @@ const Register = () => {
       } else {
         setError(result.message || 'Registration failed');
       }
-      */
     } catch (err) {
       setError('An unexpected error occurred. Please try again later.');
       console.error('Registration error:', err);

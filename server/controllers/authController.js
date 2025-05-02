@@ -8,6 +8,15 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    console.log('Registration attempt:', { username, email });
+
+    // Validate input
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: 'Username, email and password are required',
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({
       where: {
@@ -16,6 +25,7 @@ exports.register = async (req, res) => {
     });
 
     if (existingUser) {
+      console.log('Registration failed: User already exists');
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -28,6 +38,11 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+    });
+
+    console.log('User created successfully:', {
+      id: user.id,
+      username: user.username,
     });
 
     // Generate JWT token
@@ -48,7 +63,7 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

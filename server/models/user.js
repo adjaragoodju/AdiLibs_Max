@@ -1,4 +1,3 @@
-// models/user.js
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -35,10 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     {
       // Explicitly use lowercase table name for PostgreSQL
       tableName: 'users',
-      // Keep timestamps but make sure they match PostgreSQL conventions
+      // Use underscores for column names (PostgreSQL convention)
+      underscored: true,
+      // Keep timestamps
       timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
     }
   );
 

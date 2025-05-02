@@ -1,3 +1,4 @@
+// src/components/books/PopularBooks.jsx
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
@@ -64,6 +65,7 @@ const PopularBooks = ({ books, handleBookClick }) => {
                 className='cursor-pointer transition-transform hover:scale-105'
               >
                 <Book
+                  id={book.id} // Make sure to pass the book ID
                   title={book.title}
                   author={book.author}
                   year={book.year}

@@ -2,7 +2,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Book = ({ title, author, year, image }) => {
+// Updated to ensure book ID is properly passed
+const Book = ({ id, title, author, year, image }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -10,7 +11,11 @@ const Book = ({ title, author, year, image }) => {
   };
 
   return (
-    <div className='min-w-[240px] flex-shrink-0' onClick={handleClick}>
+    <div
+      className='min-w-[240px] flex-shrink-0'
+      onClick={handleClick}
+      data-book-id={id}
+    >
       <div className='h-[308px] w-full bg-gray-200 rounded-lg overflow-hidden shadow-md relative group cursor-pointer'>
         {image && (
           <img
