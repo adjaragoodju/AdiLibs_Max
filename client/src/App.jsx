@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import Browse from './pages/Browse';
 import Profile from './pages/Profile';
 import Favorites from './pages/Favorites';
+import GoogleBooks from './pages/GoogleBooks';
+import GoogleBookDetail from './components/books/GoogleBookDetail';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
@@ -20,6 +22,8 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/book/:id' element={<BookDetail />} />
           <Route path='/author/:id' element={<AuthorDetail />} />
+          <Route path='/google-books' element={<GoogleBooks />} />
+          <Route path='/google-book/:id' element={<GoogleBookDetail />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/browse' element={<Browse />} />
@@ -45,5 +49,4 @@ const App = () => {
     </AuthProvider>
   );
 };
-
 export default App;

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useBooks } from '../hooks/useBooks';
 import { useScrollToSection } from '../hooks/useScrollToSection';
 import { FavoritesProvider } from '../context/FavoritesContext';
@@ -15,6 +15,7 @@ import AboutUsSection from '../components/sections/AboutUsSection';
 import FaqsSection from '../components/sections/FaqsSection';
 import NewsletterSection from '../components/sections/NewsletterSection';
 import ReviewsSection from '../components/sections/ReviewsSection';
+import GoogleBooksPromo from '../components/sections/GoogleBooksPromo';
 
 // Import book components
 import PopularBooks from '../components/books/PopularBooks';
@@ -138,6 +139,9 @@ const Root = () => {
           handleBookClick={handleBookClick}
         />
 
+        {/* Google Books Promo Section */}
+        <GoogleBooksPromo />
+
         <ReviewsSection
           reviewsRef={reviewsRef}
           customerReviews={[
@@ -234,8 +238,6 @@ const Root = () => {
           setSelectedBook={setSelectedBook}
         />
       )}
-
-  
     </FavoritesProvider>
   );
 };

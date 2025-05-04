@@ -15,34 +15,63 @@ const BookDetail = () => {
   const API_URL = 'http://localhost:3001/api'; // Match your server port
 
   useEffect(() => {
-    // Fetch book details from API instead of local data
+    // Fetch book details from API
     const fetchBookDetails = async () => {
       try {
         setLoading(true);
 
-        // Get all books from API
+        // Debug log to help with troubleshooting
+        console.log(`Fetching book details for "${id}" from API...`);
+
+        // Get ALL books from API first - this ensures we get database IDs
         const response = await axios.get(`${API_URL}/books`);
         const books = response.data;
+        console.log(`Found ${books.length} books from API`);
 
         // Find the book by title (from URL parameter)
         const decodedTitle = decodeURIComponent(id);
         const foundBook = books.find((b) => b.title === decodedTitle);
 
         if (foundBook) {
-          console.log('Found book with ID:', foundBook.id);
+          console.log('Found book with ID in API:', foundBook.id);
           setBook(foundBook);
         } else {
+          console.log('Book not found in API, trying local data...');
           // Fallback to local data if needed
-          const localBooks = (await import('../data/books.json')).default;
-          const localBook = localBooks.find((b) => b.title === decodedTitle);
+          try {
+            const localBooksModule = await import('../data/books.json');
+            const localBooks = localBooksModule.default;
+            const localBook = localBooks.find((b) => b.title === decodedTitle);
 
-          if (localBook) {
-            console.log(
-              'Found book in local data, but it may not have the correct database ID'
-            );
-            setBook(localBook);
-          } else {
-            console.error('Book not found in API or local data');
+            if (localBook) {
+              console.log(
+                'Found book in local data, trying to find matching ID...'
+              );
+
+              // Try to find a matching ID from API books with same title
+              const matchingApiBook = books.find(
+                (b) => b.title.toLowerCase() === localBook.title.toLowerCase()
+              );
+
+              if (matchingApiBook) {
+                console.log(
+                  'Found matching book in API with ID:',
+                  matchingApiBook.id
+                );
+                // Use the book from API with ID
+                setBook(matchingApiBook);
+              } else {
+                console.warn(
+                  'Book found in local data but no matching ID in API'
+                );
+                // Use local book but it won't have a database ID
+                setBook(localBook);
+              }
+            } else {
+              console.error('Book not found in API or local data');
+            }
+          } catch (importError) {
+            console.error('Error importing local books:', importError);
           }
         }
       } catch (error) {
@@ -101,9 +130,11 @@ const BookDetail = () => {
 
     // Make sure we have a valid book object before proceeding
     if (!book.id) {
-      console.warn(
-        'Book missing ID in favorites toggle, might cause database issues'
+      console.error('Cannot add to favorites: Book ID not found');
+      alert(
+        'Cannot add to favorites - book ID not found. Please try another book.'
       );
+      return;
     }
 
     if (isInFavorites) {
@@ -169,10 +200,12 @@ const BookDetail = () => {
               <span className='ml-auto'>{book.language || 'English'}</span>
             </div>
 
-            {/* Add book ID for debugging */}
-            <div className='flex items-center text-xs text-gray-400'>
-              <span>Book ID:</span>
-              <span className='ml-auto'>{book.id || 'Not available'}</span>
+            {/* Make book ID more visible for debugging */}
+            <div className='flex items-center bg-gray-100 p-2 rounded'>
+              <span className='text-gray-700 font-semibold'>Book ID:</span>
+              <span className='ml-auto text-sm'>
+                {book.id || 'Not available'}
+              </span>
             </div>
           </div>
         </div>
@@ -227,6 +260,7 @@ const BookDetail = () => {
                   : 'bg-black hover:bg-gray-800'
               } text-white px-6 py-3 rounded-lg transition-colors font-medium flex items-center`}
               onClick={handleFavoritesToggle}
+              disabled={!book.id}
               aria-label={
                 isInFavorites ? 'Remove from favorites' : 'Add to favorites'
               }

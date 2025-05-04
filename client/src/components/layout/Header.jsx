@@ -160,6 +160,23 @@ const Header = ({
             )}
 
             <Link
+              to='/google-books'
+              className='font-medium hover:text-black transition-colors'
+              onMouseEnter={() => setHoveredNavItem('googlebooks')}
+              onMouseLeave={() => setHoveredNavItem(null)}
+            >
+              <span
+                className={`relative ${
+                  hoveredNavItem === 'googlebooks'
+                    ? 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
+                    : ''
+                }`}
+              >
+                Google Books
+              </span>
+            </Link>
+
+            <Link
               to='/browse'
               className='font-medium hover:text-black transition-colors'
               onMouseEnter={() => setHoveredNavItem('search')}
@@ -211,6 +228,12 @@ const Header = ({
                   {favorites.length}
                 </span>
               )}
+            </Link>
+            <Link
+              to='/google-books'
+              className='font-medium hover:text-black transition-colors block'
+            >
+              Google Books
             </Link>
 
             {isAuthenticated ? (

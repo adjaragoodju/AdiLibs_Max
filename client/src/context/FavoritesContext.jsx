@@ -59,9 +59,27 @@ export function FavoritesProvider({ children }) {
     try {
       console.log('Adding to favorites:', book);
 
+      // Check if the book is from Google Books API
+      const isGoogleBook = book.googleBooksId || book.isGoogleBook;
+
+      // Use consistent ID for checking
+      const bookIdentifier = isGoogleBook
+        ? book.googleBooksId || book.id
+        : book.title;
+      const checkProperty = isGoogleBook ? 'googleBooksId' : 'title';
+
       // Add to UI immediately
-      if (!favorites.some((fav) => fav.title === book.title)) {
-        const newFavorites = [...favorites, book];
+      if (!favorites.some((fav) => fav[checkProperty] === bookIdentifier)) {
+        // For Google Books, ensure we have a googleBooksId property
+        const bookToAdd = isGoogleBook
+          ? {
+              ...book,
+              googleBooksId: book.googleBooksId || book.id,
+              isGoogleBook: true,
+            }
+          : book;
+
+        const newFavorites = [...favorites, bookToAdd];
         setFavorites(newFavorites);
         localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
         console.log('Updated UI and localStorage with new favorite');
@@ -69,8 +87,9 @@ export function FavoritesProvider({ children }) {
         console.log('Book already in favorites UI');
       }
 
-      // Only save to database if authenticated
-      if (isAuthenticated && book.id) {
+      // Only save to database if authenticated and it's not a Google Book
+      // (since Google Books won't exist in our database)
+      if (isAuthenticated && book.id && !isGoogleBook) {
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -94,6 +113,10 @@ export function FavoritesProvider({ children }) {
           console.log('Not saving to database - user not authenticated');
         } else if (!book.id) {
           console.log('Not saving to database - book has no ID');
+        } else if (isGoogleBook) {
+          console.log(
+            'Not saving to database - Google Book stored locally only'
+          );
         }
       }
     } catch (error) {
@@ -109,14 +132,28 @@ export function FavoritesProvider({ children }) {
     try {
       console.log('Removing from favorites:', book);
 
-      // Remove from UI immediately
-      const newFavorites = favorites.filter((fav) => fav.title !== book.title);
+      // Check if the book is from Google Books API
+      const isGoogleBook = book.googleBooksId || book.isGoogleBook;
+
+      // Use appropriate filtering based on book source
+      let newFavorites;
+      if (isGoogleBook) {
+        const googleId = book.googleBooksId || book.id;
+        newFavorites = favorites.filter(
+          (fav) => !(fav.googleBooksId === googleId || fav.id === googleId)
+        );
+        console.log(`Removing Google Book with ID: ${googleId}`);
+      } else {
+        newFavorites = favorites.filter((fav) => fav.title !== book.title);
+        console.log(`Removing local book: ${book.title}`);
+      }
+
       setFavorites(newFavorites);
       localStorage.setItem('adilibs-favorites', JSON.stringify(newFavorites));
       console.log('Updated UI and localStorage');
 
-      // Remove from database if authenticated and has ID
-      if (isAuthenticated && book.id) {
+      // Remove from database if authenticated, has ID, and is not a Google Book
+      if (isAuthenticated && book.id && !isGoogleBook) {
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -138,6 +175,10 @@ export function FavoritesProvider({ children }) {
           console.log('Not removing from database - user not authenticated');
         } else if (!book.id) {
           console.log('Not removing from database - book has no ID');
+        } else if (isGoogleBook) {
+          console.log(
+            'Not removing from database - Google Book was only stored locally'
+          );
         }
       }
     } catch (error) {
